@@ -1,8 +1,25 @@
 const dotenv = require("dotenv");
 dotenv.config();
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const { OAuth2Client } = require("google-auth-library");
+
+
+app.use(cors({
+  origin: "*",
+  credentials: true, // Allow cookies and Authorization headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+}));
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", req.headers.origin); // Dynamically allow the origin
+  res.header("Access-Control-Allow-Credentials", 'true'); // Allow cookies
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
+
 
 async function getUserData(access_token) {
   const response = await fetch(
@@ -20,10 +37,8 @@ app.get("/hello", (req,res)=>{
 
 
 app.post('/request', async function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", 'http://localhost:5173');
-    res.header("Access-Control-Allow-Credentials", 'true');
-    res.header("Referrer-Policy","no-referrer-when-downgrade");
-    const redirectURL = 'http://127.0.0.1:3000/oauth';
+    const redirectURL = process.env.REDIRECT_URL;
+
     const oAuth2Client = new OAuth2Client(
       process.env.CLIENT_ID,
       process.env.CLIENT_SECRET,
@@ -45,7 +60,7 @@ app.get("/oauth", async function (req, res, next) {
   const code = req.query.code;
 
   try {
-    const redirectURL = "http://127.0.0.1:3000/oauth";
+    const redirectURL = process.env.REDIRECT_URL;
     const oAuth2Client = new OAuth2Client(
       process.env.CLIENT_ID,
       process.env.CLIENT_SECRET,
@@ -61,7 +76,7 @@ app.get("/oauth", async function (req, res, next) {
     console.log("Error logging in with OAuth2 user", err);
   }
 
-  res.redirect(303, "http://localhost:5173");
+  res.redirect(303, process.env.CLIENT_URL);
 });
 
 app.listen(3000);
