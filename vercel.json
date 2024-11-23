@@ -1,0 +1,13 @@
+{
+    "rewrites": [
+      {
+        "source": "/api/(.*)", 
+        "destination": "/backend/index.js"
+      },
+      {
+        "source": "/(.*)",
+        "destination": "/frontend/google auth/$1"
+      }
+    ]
+  }
+  
