@@ -5,7 +5,7 @@ function navigate(url){
 }
 
 async function auth(){
-  const response =await fetch('https://google-auth-seven-nu.vercel.app/request',{method:'post'});
+  const response =await fetch('https://googleauth-4dga.onrender.com/request',{method:'post'});
 
   const data = await response.json();
   console.log(data);
